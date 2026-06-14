@@ -1,0 +1,43 @@
+FUNKCIONALNI ZAHTEVI
+-----------------------------------------------
+
+- Generisanje para kljuceva
+	- korisnik unosi ime, mejl i velicinu kljuca i lozinku
+- Dodavanje para kljuceva u privatni prsten
+- Brisanje para kljuceva iz privatnog/javnog prstena
+- Uvoz javnog dela kljuca u .pem
+- Uvoz celog para kljuceva u .pem
+- Izvoz javnog dela kljuca u .pem
+- Izvoz celog para kljuceva u .pem
+- Kreiranje Key ID
+- Prijem i slanje (u oba smera):
+	- Potpis (bira privatni kljuc)
+	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128)
+	- Kompresija
+	- Konverzija
+
+
+GUI
+-----------------------------------------------
+- Prikaz privatnog prstena
+	- pristup privatnom kljucu trazi unos lozinke
+- Prikaz javnog prstena
+
+
+SLANJE PORUKE
+-----------------------------------------------
+- bira da li hoce tajnost, potpis, kompresiju, konverziju
+- slanjem poruke se kreira datoteka
+
+PRIJEM PORUKE
+-----------------------------------------------
+- korisnik bira datoteku (predstavlja primljenu poruku)
+- dekripcija i verifikacija
+- ako je koriscen potpis, prikazuje info o potpisniku
+- korisnik moze da sacuva originalnu poruku
+- ako se pojavi negde greska, prikazati je
+
+NAPOMENE
+-----------------------------------------------
+- prsteni su hes mape po onome po cemu se pretrazuje
+- treba preneti u poruci info da li je obezbedjena tajnost (koriscenom algoritmu sifrovanja ako jeste), da li je kompresovano, da li je radix, da li ima autentikacije
