@@ -1,2 +1,2 @@
 # PGP-Implementation
-Simple PGP implementation
+Simple PGP implementation by Teodora and Steva
