@@ -1,15 +1,15 @@
 FUNKCIONALNI ZAHTEVI
 -----------------------------------------------
 
-- Generisanje para kljuceva
+- Generisanje para kljuceva - TEODORA
 	- korisnik unosi ime, mejl i velicinu kljuca i lozinku
-- Dodavanje para kljuceva u privatni prsten
-- Brisanje para kljuceva iz privatnog/javnog prstena
+- Dodavanje para kljuceva u privatni prsten - TEODORA
+- Brisanje para kljuceva iz privatnog/javnog prstena - STEVA
 - Uvoz javnog dela kljuca u .pem
 - Uvoz celog para kljuceva u .pem
 - Izvoz javnog dela kljuca u .pem
 - Izvoz celog para kljuceva u .pem
-- Kreiranje Key ID
+- Kreiranje Key ID - TEODORA
 - Prijem i slanje (u oba smera):
 	- Potpis (bira privatni kljuc)
 	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128)
