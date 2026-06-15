@@ -1,8 +1,7 @@
 FUNKCIONALNI ZAHTEVI
 -----------------------------------------------
 
-- Generisanje para kljuceva (generisanje kljuceva->sifrovanje privatnog kljuca->dodavanje u privatni prsten)
-	- korisnik unosi ime, mejl i velicinu kljuca i lozinku
+✔ Generisanje para kljuceva (generisanje kljuceva->sifrovanje privatnog kljuca->dodavanje u privatni prsten)
 ✔ Dodavanje para kljuceva u privatni prsten
 ✔ Brisanje para kljuceva iz privatnog prstena
 ✔  Dodavanje kljuca u javni prsten
