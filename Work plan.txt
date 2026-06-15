@@ -15,8 +15,8 @@ FUNKCIONALNI ZAHTEVI
 - Prijem i slanje (u oba smera):
 	- Potpis (bira privatni kljuc)
 	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128)
-	- Kompresija
-	- Konverzija
+✔	- Kompresija
+✔	- Konverzija
 
 
 GUI
