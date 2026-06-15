@@ -4,7 +4,9 @@ FUNKCIONALNI ZAHTEVI
 - Generisanje para kljuceva - TEODORA
 	- korisnik unosi ime, mejl i velicinu kljuca i lozinku
 - Dodavanje para kljuceva u privatni prsten - TEODORA
-- Brisanje para kljuceva iz privatnog/javnog prstena - STEVA
+- Brisanje para kljuceva iz privatnog prstena - STEVA
+✔️ - Dodavanje kljuca u javni prsten
+✔️ - Brisanje para kljuceva iz javnog prstena - STEVA
 - Uvoz javnog dela kljuca u .pem
 - Uvoz celog para kljuceva u .pem
 - Izvoz javnog dela kljuca u .pem
