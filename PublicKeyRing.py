@@ -11,7 +11,7 @@ class PublicKeyRing:
 
 
     class PublicKeyRingRecord:
-        def __init__(self, public_key, timestamp = time(), owner_trust = None, key_legitimacy = None, signatures = None, signature_trusts = None):
+        def __init__(self, public_key, timestamp): #, owner_trust = None, key_legitimacy = None, signatures = None, signature_trusts = None):
             self.public_key = public_key
             self.timestamp = timestamp
             # self.owner_trust = owner_trust
@@ -37,9 +37,9 @@ class PublicKeyRing:
 
 
 
-    def add_public_key(self, public_key, name, email):
+    def add_public_key(self, public_key, name, email, timestamp = time()):
         key_id = public_key % (2 ** 64)
-        self.public_key_ring[key_id] = PublicKeyRing.PublicKeyRingRecord(public_key)
+        self.public_key_ring[key_id] = PublicKeyRing.PublicKeyRingRecord(public_key, timestamp)
 
         self.public_key_ring_by_name[name] = key_id
         self.public_key_ring_by_email[email] = key_id
