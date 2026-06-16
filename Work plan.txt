@@ -4,16 +4,20 @@ FUNKCIONALNI ZAHTEVI
 ✔ Generisanje para kljuceva (generisanje kljuceva->sifrovanje privatnog kljuca->dodavanje u privatni prsten)
 ✔ Dodavanje para kljuceva u privatni prsten
 ✔ Brisanje para kljuceva iz privatnog prstena
-✔  Dodavanje kljuca u javni prsten
-✔  Brisanje para kljuceva iz javnog prstena
-✔  Uvoz javnog dela kljuca u .pem
+✔ Dodavanje kljuca u javni prsten
+✔ Brisanje para kljuceva iz javnog prstena
+✔ Uvoz javnog dela kljuca u .pem
 - Uvoz celog para kljuceva u .pem
-✔  Izvoz javnog dela kljuca u .pem
+✔ Izvoz javnog dela kljuca u .pem
 - Izvoz celog para kljuceva u .pem
-- Kreiranje Key ID
+
 - Prijem i slanje (u oba smera):
 	- Potpis (bira privatni kljuc)
-	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128)
+✔		- potpisivanje
+		- provera potpisa
+	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128) i dekripcija
+✔		- enkripcija
+		- dekripcija
 ✔	- Kompresija
 ✔	- Konverzija
 
