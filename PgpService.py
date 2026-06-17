@@ -48,7 +48,18 @@ class PGP_Service:
         if conversion:
             message_bytes = conversion_encode(message_bytes)
 
-        make_file(message_bytes, filename)
+        full_message = {
+            "services": {
+                "authetication": authetication,
+                "confidentiality": confidentiality,
+                "encryption_algorithm": encryption_algorithm,
+                "compression": compression,
+                "conversion": conversion
+            },
+            "message": message_bytes
+        }
+
+        make_file(json.dumps(full_message).encode('utf-8'), filename)
 
     def recieve_message(self):
         # TODO

@@ -2,7 +2,7 @@ from pathlib import Path
 
 sent_messages_folder = Path('sent_messages')
 
-def make_file(message: bytes, file_name: str) -> bytes:
+def make_file(message: bytes, file_name: str):
     global sent_messages_folder
 
     file_path = sent_messages_folder / file_name
@@ -11,6 +11,6 @@ def make_file(message: bytes, file_name: str) -> bytes:
 
     file_path.write_bytes(message)
 
-def read_file(file_name: str) -> bytes:
+def read_file(file_name: str):
     # TODO
     pass
