@@ -1,8 +1,12 @@
 from time import time
 import hashlib
+from typing import Optional
+
 from Crypto.Cipher import CAST
 from Crypto.Util.Padding import pad, unpad
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
+from cryptography.hazmat.primitives.asymmetric.types import PrivateKeyTypes
 
 
 class PrivateKeyRing:
@@ -22,7 +26,7 @@ class PrivateKeyRing:
             self._initialized = True
 
     class PrivateKeyRingRecord:
-        def __init__(self, timestamp, public_key, enc_private_key, name, email):
+        def __init__(self, timestamp: float, public_key: RSAPublicKey, enc_private_key: bytes, name: str, email: str):
             self.timestamp = timestamp
             self.public_key = public_key
             self.enc_private_key = enc_private_key # stores encoded private key
@@ -31,7 +35,7 @@ class PrivateKeyRing:
 
 
     # returns encoded private key
-    def get_private_key_ring_by_name(self, name):
+    def get_private_key_ring_by_name(self, name: str) -> Optional[bytes]:
         if name in self.private_key_ring_by_name:
             key_id = self.private_key_ring_by_name[name]
             if key_id in self.private_key_ring:
@@ -39,14 +43,14 @@ class PrivateKeyRing:
         return None
 
     # returns encoded private key
-    def get_private_key_ring_by_email(self, email):
+    def get_private_key_ring_by_email(self, email: str) -> Optional[bytes]:
         if email in self.private_key_ring_by_email:
             key_id = self.private_key_ring_by_email[email]
             if key_id in self.private_key_ring:
                 return self.private_key_ring[key_id].enc_private_key
         return None
 
-    def add_private_key(self, public_key, enc_private_key, name, email):
+    def add_private_key(self, public_key: RSAPublicKey, enc_private_key: bytes, name: str, email: str) -> None:
         timestamp = time()
         record = PrivateKeyRing.PrivateKeyRingRecord(
             timestamp, public_key, enc_private_key, name, email
@@ -57,7 +61,7 @@ class PrivateKeyRing:
         self.private_key_ring_by_email[email]=key_id
 
 
-    def remove_private_key(self, public_key):
+    def remove_private_key(self, public_key: RSAPublicKey) -> None:
         public_key = public_key.public_numbers().n
         key_id = public_key % (2 ** 64)
         record = self.private_key_ring.pop(key_id, None)
@@ -68,7 +72,7 @@ class PrivateKeyRing:
         self.private_key_ring_by_name.pop(record.name, None)
         self.private_key_ring_by_email.pop(record.email, None)
 
-    def encrypt_private_key(self, password, private_key):
+    def encrypt_private_key(self, password: str, private_key: PrivateKeyTypes) -> bytes:
         # serialize private key
         private_key_bytes = private_key.private_bytes(
             encoding=serialization.Encoding.DER,
@@ -94,7 +98,7 @@ class PrivateKeyRing:
 
         return encrypted_private_key
 
-    def decrypt_private_key(self, encrypted_private_key, password):
+    def decrypt_private_key(self, encrypted_private_key: bytes, password: str) -> Optional[bytes]:
         try:
             # SHA1 → 128-bit key
             sha1 = hashlib.sha1(password.encode()).digest()

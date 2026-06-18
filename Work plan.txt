@@ -7,9 +7,9 @@ FUNKCIONALNI ZAHTEVI
 ✔ Dodavanje kljuca u javni prsten
 ✔ Brisanje para kljuceva iz javnog prstena
 ✔ Uvoz javnog dela kljuca u .pem
-- Uvoz celog para kljuceva u .pem
+✔ Uvoz celog para kljuceva u .pem
 ✔ Izvoz javnog dela kljuca u .pem
-- Izvoz celog para kljuceva u .pem
+✔ Izvoz celog para kljuceva u .pem
 
 - Prijem i slanje (u oba smera):
 	- Potpis (bira privatni kljuc)
