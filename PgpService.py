@@ -62,10 +62,10 @@ class PGP_Service:
             "message": message_bytes_encoded
         }
 
-        # make_file(json.dumps(full_message).encode('utf-8'), filename)
-        json_data = json.dumps(full_message).encode('utf-8')
-        with open(filename, 'wb') as f:
-            f.write(json_data)
+        make_file(json.dumps(full_message).encode('utf-8'), filename)
+        # json_data = json.dumps(full_message).encode('utf-8')
+        # with open(filename, 'wb') as f:
+        #     f.write(json_data)
 
     def receive_message(self, filename: str, private_key: RSAPrivateKey, sender_public_key: RSAPublicKey):
         with open(filename, 'rb') as f:

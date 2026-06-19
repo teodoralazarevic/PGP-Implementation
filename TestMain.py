@@ -39,7 +39,7 @@ def test_simple():
 
     print("\n4. Prijem poruke...")
     received = pgp.receive_message(
-        filename="poruka.txt",
+        filename="sent_messages/poruka.txt",
         private_key=receiver_private,
         sender_public_key=sender_public
     )
