@@ -1,12 +1,13 @@
+import base64
 import json
-from time import time
 
+from time import time
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 
-from Authentication import sign
-from Compression import compress
-from Confidentiality import encrypt, EncryptionAlgorithm
-from Conversion import conversion_encode
+from Authentication import sign, verify_signature
+from Compression import compress, decompress
+from Confidentiality import encrypt, EncryptionAlgorithm, decrypt
+from Conversion import conversion_encode, conversion_decode
 from Files import make_file
 from KeyGenerators import generate_rsa_key_pair
 
@@ -48,19 +49,58 @@ class PGP_Service:
         if conversion:
             message_bytes = conversion_encode(message_bytes)
 
+        message_bytes_encoded = base64.b64encode(message_bytes).decode('utf-8')
+
         full_message = {
             "services": {
-                "authetication": authetication,
+                "authentication": authetication,
                 "confidentiality": confidentiality,
-                "encryption_algorithm": encryption_algorithm,
+                "encryption_algorithm": encryption_algorithm.value,
                 "compression": compression,
                 "conversion": conversion
             },
-            "message": message_bytes
+            "message": message_bytes_encoded
         }
 
-        make_file(json.dumps(full_message).encode('utf-8'), filename)
+        # make_file(json.dumps(full_message).encode('utf-8'), filename)
+        json_data = json.dumps(full_message).encode('utf-8')
+        with open(filename, 'wb') as f:
+            f.write(json_data)
 
-    def recieve_message(self):
-        # TODO
-        pass
+    def receive_message(self, filename: str, private_key: RSAPrivateKey, sender_public_key: RSAPublicKey):
+        with open(filename, 'rb') as f:
+            full_message = json.loads(f.read().decode('utf-8'))
+
+        services = full_message["services"]
+        message_bytes = base64.b64decode(full_message["message"])
+
+        if services["conversion"]:
+            message_bytes = conversion_decode(message_bytes)
+
+        if services["confidentiality"]:
+            encryption_algorithm_val = services["encryption_algorithm"]
+            encryption_algorithm = EncryptionAlgorithm(encryption_algorithm_val)
+            message_bytes = decrypt(message_bytes, private_key, encryption_algorithm)
+
+        if services["compression"]:
+            message_bytes = decompress(message_bytes)
+
+        if services["authentication"]:
+            is_valid = verify_signature(message_bytes, sender_public_key)
+            if not is_valid:
+                raise Exception("Signature verification failed")
+
+            sig_data = json.loads(message_bytes.decode('utf-8'))
+            original_message = base64.b64decode(sig_data['message'])
+            message_bytes = original_message
+
+        message = json.loads(message_bytes.decode('utf-8'))
+
+        return {
+            "filename": message.get("filename"),
+            "timestamp": message.get("timestamp"),
+            "data": message.get("data")
+        }
+
+
+

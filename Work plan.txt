@@ -11,7 +11,7 @@ FUNKCIONALNI ZAHTEVI
 ✔ Izvoz javnog dela kljuca u .pem
 ✔ Izvoz celog para kljuceva u .pem
 
-- Prijem i slanje (u oba smera):
+✔ Prijem i slanje (u oba smera):
 ✔	- Potpis (bira privatni kljuc)
 ✔		- potpisivanje
 ✔		- provera potpisa
