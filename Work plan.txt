@@ -12,9 +12,9 @@ FUNKCIONALNI ZAHTEVI
 ✔ Izvoz celog para kljuceva u .pem
 
 - Prijem i slanje (u oba smera):
-	- Potpis (bira privatni kljuc)
+✔	- Potpis (bira privatni kljuc)
 ✔		- potpisivanje
-		- provera potpisa
+✔		- provera potpisa
 	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128) i dekripcija
 ✔		- enkripcija
 		- dekripcija
