@@ -15,9 +15,9 @@ FUNKCIONALNI ZAHTEVI
 ✔	- Potpis (bira privatni kljuc)
 ✔		- potpisivanje
 ✔		- provera potpisa
-	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128) i dekripcija
+✔	- Enkripcija (bira javni kljuc i algoritam - TripleDES ili AES128) i dekripcija
 ✔		- enkripcija
-		- dekripcija
+✔		- dekripcija
 ✔	- Kompresija
 ✔	- Konverzija
 

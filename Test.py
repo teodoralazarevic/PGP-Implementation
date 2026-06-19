@@ -6,6 +6,7 @@ from PrivateKeyRing import PrivateKeyRing
 from PemFiles import export_key_pair, import_key_pair
 from Authentication import sign, verify_signature
 from cryptography.hazmat.primitives.asymmetric import rsa
+from Confidentiality import encrypt, decrypt, EncryptionAlgorithm
 
 
 """
@@ -54,4 +55,20 @@ public_key = record.public_key
 # original_message = b"Ovo je test poruka"
 # signed_data = sign(original_message, private_key1)
 # print(verify_signature(signed_data, public_key1))
+
+
+# TEST - encryption and decryption of message
+# private_key2 = rsa.generate_private_key(
+#     public_exponent=65537,
+#     key_size=2048
+# )
+#
+# public_key2 = private_key2.public_key()
+# message = b"Najjaci projekat ikada"
+#
+# enc = encrypt(message, public_key2, EncryptionAlgorithm.TDES)
+# print("ENCRYPTED:", enc)
+#
+# dec = decrypt(enc, private_key2, EncryptionAlgorithm.TDES)
+# print("DECRYPTED:", dec)
 
