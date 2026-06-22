@@ -2,6 +2,7 @@ import customtkinter as ctk
 
 from GUI.PrivateKeyRingWindows import PrivateKeyRingWindow
 from GUI.PublicKeyRingWIndow import PublicKeyRingWindow
+from GUI.ReceiveMessageDialog import ReceiveMessageDialog
 from GUI.SendMessageDialog import SendMessageDialog
 
 
@@ -55,7 +56,8 @@ class HomePage(ctk.CTkFrame):
             button_frame,
             text="Receive Message",
             width=btn_width,
-            height=btn_height
+            height=btn_height,
+            command = self.open_receive_message
         )
 
         public_btn.grid(row=0, column=0, padx=20, pady=20)
@@ -73,8 +75,12 @@ class HomePage(ctk.CTkFrame):
         footer.pack(pady=(10, 20))
 
     def open_send_message(self):
-        dialog = SendMessageDialog(self)
-        self.wait_window(dialog)
+        send_dialog = SendMessageDialog(self)
+        self.wait_window(send_dialog)
+
+    def open_receive_message(self):
+        receive_dialog = ReceiveMessageDialog(self)
+        self.wait_window(receive_dialog)
 
 
 class App(ctk.CTk):
