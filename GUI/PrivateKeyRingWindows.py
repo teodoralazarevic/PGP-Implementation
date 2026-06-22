@@ -1,3 +1,4 @@
+import base64
 from tkinter import ttk
 import customtkinter as ctk
 
@@ -123,6 +124,7 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
                     record.timestamp,
                     hex(record.public_key.public_numbers().n % (2 ** 64)),
                     hex(record.public_key.public_numbers().n),
+                    base64.b64encode(record.enc_private_key).decode("utf-8"),
                     record.name,
                     record.email
                 )
