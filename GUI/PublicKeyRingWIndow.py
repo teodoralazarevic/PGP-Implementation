@@ -1,5 +1,9 @@
+import base64
 from tkinter import ttk
 import customtkinter as ctk
+
+import PgpService
+from cryptography.hazmat.primitives import serialization
 
 
 class PublicKeyRingWindow(ctk.CTkToplevel):
@@ -52,18 +56,7 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
             pady=10
         )
 
-        # Dummy data
-        self.tree.insert(
-            "",
-            "end",
-            values=(
-                "2026-06-20",
-                "AB12CD34",
-                "PUBLIC_KEY_DATA",
-                "Alice",
-                "alice@test.com"
-            )
-        )
+        self.refresh_table()
 
         close_btn = ctk.CTkButton(
             self,
@@ -77,3 +70,37 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
         self.grab_set()
 
         self.resizable(False, False)
+
+
+    # loads data from public key ring
+    def refresh_table(self):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        public_key_ring = PgpService.PublicKeyRing()
+
+        for key_id, record in public_key_ring.public_key_ring.items():
+            timestamp = record.timestamp
+            key_id_hex = hex(key_id)
+
+
+            public_key_bytes = record.public_key.public_bytes(
+                encoding=serialization.Encoding.DER,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            )
+            public_key_b64 = base64.b64encode(public_key_bytes).decode('utf-8')[:50] + "..."
+
+            name = record.name
+            email = record.email
+
+            self.tree.insert(
+                "",
+                "end",
+                values=(
+                    timestamp,
+                    key_id_hex,
+                    public_key_b64,
+                    name,
+                    email
+                )
+            )

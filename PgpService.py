@@ -27,6 +27,8 @@ class PGP_Service:
 
         # add record to private key ring
         self.private_key_ring.add_private_key(public_key, encrypted_private_key, name, email)
+        # ZA TESTIRANJE
+        self.public_key_ring.add_public_key(public_key, name, email)
 
     def send_message(self, data: str, filename: str, authetication: bool, sender_private_key: RSAPrivateKey, confidentiality: bool, reciever_public_key: RSAPublicKey, encryption_algorithm: EncryptionAlgorithm, compression: bool, conversion: bool):
         message = {
