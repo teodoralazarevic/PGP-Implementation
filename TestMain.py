@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 import PgpService
 from Confidentiality import EncryptionAlgorithm
+from Files import sent_messages_folder
 
 
 def test_simple():
@@ -39,7 +40,7 @@ def test_simple():
 
     print("\n4. Prijem poruke...")
     received = pgp.receive_message(
-        filename="sent_messages/poruka.txt",
+        filename=f"{sent_messages_folder}/poruka.txt",
         private_key=receiver_private,
         sender_public_key=sender_public
     )
