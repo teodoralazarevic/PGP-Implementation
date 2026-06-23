@@ -43,11 +43,11 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
         self.tree.heading("name", text="Name")
         self.tree.heading("email", text="Email")
 
-        self.tree.column("timestamp", width=100)
-        self.tree.column("key_id", width=40)
-        self.tree.column("public_key", width=240)
-        self.tree.column("name", width=100)
-        self.tree.column("email", width=160)
+        self.tree.column("timestamp", width=45)
+        self.tree.column("key_id", width=110)
+        self.tree.column("public_key", width=400)
+        self.tree.column("name", width=90)
+        self.tree.column("email", width=110)
 
         self.tree.pack(
             fill="both",
@@ -95,7 +95,7 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
                 "",
                 "end",
                 values=(
-                    timestamp,
+                    int(timestamp),
                     key_id_hex,
                     public_key_b64,
                     name,

@@ -273,6 +273,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
         dialog.geometry("450x250")
         dialog.resizable(False, False)
         dialog.transient(self)
+        dialog.wait_visibility()
         dialog.grab_set()
 
         dialog.update_idletasks()

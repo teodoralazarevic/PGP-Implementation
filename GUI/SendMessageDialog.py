@@ -212,7 +212,7 @@ class SendMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            record = PGP_Service().private_key_ring.get(key_id)
+            record = PGP_Service().private_key_ring.private_key_ring.get(key_id)
             if record:
                 return record.enc_private_key
         except:
@@ -226,7 +226,7 @@ class SendMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            record = PGP_Service().public_key_ring.get(key_id)
+            record = PGP_Service().public_key_ring.public_key_ring.get(key_id)
             if record:
                 return record.public_key
         except:
@@ -239,6 +239,7 @@ class SendMessageDialog(ctk.CTkToplevel):
         dialog.geometry("450x250")
         dialog.resizable(False, False)
         dialog.transient(self)
+        dialog.wait_visibility()
         dialog.grab_set()
 
         dialog.update_idletasks()

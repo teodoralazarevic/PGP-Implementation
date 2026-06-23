@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from GUI.PrivateKeyRingWindows import PrivateKeyRingWindow
+from GUI.PrivateKeyRingWindow import PrivateKeyRingWindow
 from GUI.PublicKeyRingWIndow import PublicKeyRingWindow
 from GUI.ReceiveMessageDialog import ReceiveMessageDialog
 from GUI.SendMessageDialog import SendMessageDialog
@@ -70,7 +70,7 @@ class HomePage(ctk.CTkFrame):
         footer = ctk.CTkLabel(
             self,
             text="Projekat iz Zaštite Podataka 2026.\nTeodora Lazarević 0136/22\nStevan Vugdelija 0096/22",
-            font=("Arial", 12)
+            font=("Arial", 14)
         )
         footer.pack(pady=(10, 20))
 
