@@ -16,6 +16,13 @@ from PublicKeyRing import PublicKeyRing
 
 
 class PGP_Service:
+    instance = None
+
+    def __new__(cls):
+        if cls.instance is None:
+            cls.instance = super().__new__(cls)
+        return cls.instance
+
     def __init__(self):
         self.public_key_ring = PublicKeyRing()
         self.private_key_ring = PrivateKeyRing()
@@ -51,7 +58,7 @@ class PGP_Service:
         if conversion:
             message_bytes = conversion_encode(message_bytes)
 
-        message_bytes_encoded = base64.b64encode(message_bytes).decode('utf-8')
+        # message_bytes_encoded = base64.b64encode(message_bytes).decode('utf-8')
 
         full_message = {
             "services": {
@@ -61,7 +68,7 @@ class PGP_Service:
                 "compression": compression,
                 "conversion": conversion
             },
-            "message": message_bytes_encoded
+            "message": message_bytes.decode('utf-8')
         }
 
         make_file(json.dumps(full_message).encode('utf-8'), filename)
@@ -74,7 +81,8 @@ class PGP_Service:
             full_message = json.loads(f.read().decode('utf-8'))
 
         services = full_message["services"]
-        message_bytes = base64.b64decode(full_message["message"])
+        # message_bytes = base64.b64decode(full_message["message"])
+        message_bytes = full_message["message"].encode('utf-8')
 
         if services["conversion"]:
             message_bytes = conversion_decode(message_bytes)

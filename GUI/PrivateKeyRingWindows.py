@@ -2,7 +2,7 @@ import base64
 from tkinter import ttk
 import customtkinter as ctk
 
-import PgpService
+from PgpService import PGP_Service
 from GUI.GenerateKeyDialog import GenerateKeyDialog
 
 
@@ -59,40 +59,31 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
             pady=10
         )
 
-        # Dummy data
-        # self.tree.insert(
-        #     "",
-        #     "end",
-        #     values=(
-        #         "2026-06-20",
-        #         "AB12CD34",
-        #         "PUBLIC_KEY_DATA",
-        #         "PRIVATE_KEY_DATA",
-        #         "Alice",
-        #         "alice@test.com"
-        #     )
-        # )
         self.refresh_table()
 
+        button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        button_frame.pack(pady=10)
+
+        generate_btn = ctk.CTkButton(
+            button_frame,
+            text="Generate Key Pair",
+            command=self.generate_key_dialog
+        )
+        generate_btn.pack(side="left", padx=5)
+
         close_btn = ctk.CTkButton(
-            self,
+            button_frame,
             text="Close",
             command=self.destroy
         )
-        close_btn.pack(pady=10)
+        close_btn.pack(side="left", padx=5)
+
 
         self.transient(parent)
         self.wait_visibility()
         self.grab_set()
 
         self.resizable(False, False)
-
-        generate_btn = ctk.CTkButton(
-            self,
-            text="Generate Key Pair",
-            command=self.generate_key_dialog
-        )
-        generate_btn.pack(pady=10)
 
     def generate_key_dialog(self):
         dialog = GenerateKeyDialog(self)
@@ -102,7 +93,7 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
         if dialog.result is None:
             return
 
-        PgpService.PGP_Service().generate_private_key_pair(
+        PGP_Service().generate_private_key_pair(
             dialog.result["name"],
             dialog.result["email"],
             int(dialog.result["key_size"]),
@@ -116,7 +107,7 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        for key_id, record in PgpService.PrivateKeyRing().private_key_ring.items():
+        for key_id, record in PGP_Service().private_key_ring.private_key_ring.items():
             self.tree.insert(
                 "",
                 "end",

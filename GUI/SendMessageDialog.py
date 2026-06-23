@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-import PgpService
+from PgpService import PGP_Service
 from Confidentiality import EncryptionAlgorithm
 import re
 from cryptography.hazmat.primitives import serialization
@@ -155,8 +155,8 @@ class SendMessageDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             button_frame,
-            text="Cancel",
-            command=self.cancel,
+            text="Close",
+            command=self.close,
             width=150,
             height=40
         ).pack(side="left", padx=10)
@@ -169,7 +169,7 @@ class SendMessageDialog(ctk.CTkToplevel):
     """Get list of public keys from public key ring"""
     def get_public_keys(self):
         try:
-            keys = PgpService.PublicKeyRing().public_key_ring
+            keys = PGP_Service().public_key_ring.public_key_ring
             return [f"{hex(key_id)} - {record.name} <{record.email}>"
                     for key_id, record in keys.items()]
         except:
@@ -178,7 +178,7 @@ class SendMessageDialog(ctk.CTkToplevel):
     """Get list of private keys from private key ring"""
     def get_private_keys(self):
         try:
-            keys = PgpService.PrivateKeyRing().private_key_ring
+            keys = PGP_Service().private_key_ring.private_key_ring
             return [f"{hex(key_id)} - {record.name} <{record.email}>"
                     for key_id, record in keys.items()]
         except:
@@ -212,8 +212,7 @@ class SendMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            private_key_ring = PgpService.PrivateKeyRing()
-            record = private_key_ring.private_key_ring.get(key_id)
+            record = PGP_Service().private_key_ring.get(key_id)
             if record:
                 return record.enc_private_key
         except:
@@ -227,8 +226,7 @@ class SendMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            public_key_ring = PgpService.PublicKeyRing()
-            record = public_key_ring.public_key_ring.get(key_id)
+            record = PGP_Service().public_key_ring.get(key_id)
             if record:
                 return record.public_key
         except:
@@ -340,7 +338,7 @@ class SendMessageDialog(ctk.CTkToplevel):
 
     def decrypt_private_key(self, encrypted_private_key: bytes, password: str) -> RSAPrivateKey | None:
         try:
-            private_key_bytes = PgpService.PrivateKeyRing().decrypt_private_key(
+            private_key_bytes = PGP_Service().private_key_ring.decrypt_private_key(
                 encrypted_private_key,
                 password
             )
@@ -434,7 +432,7 @@ class SendMessageDialog(ctk.CTkToplevel):
                 return
 
         try:
-            PgpService.PGP_Service().send_message(
+            PGP_Service().send_message(
                 self.result["message"],
                 self.result["filename"],
                 self.result["sign"],
@@ -450,6 +448,6 @@ class SendMessageDialog(ctk.CTkToplevel):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to send message: {str(e)}")
 
-    def cancel(self):
+    def close(self):
         self.result = None
         self.destroy()

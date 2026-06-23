@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
-import PgpService
+
+from Files import sent_messages_folder
+from PgpService import PGP_Service
 import re
 import json
 import os
@@ -77,19 +79,19 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
         self.services_label = ctk.CTkLabel(
             self.info_frame,
             text="",
-            font=("Arial", 12),
+            font=("Arial", 16),
             justify="left"
         )
-        self.services_label.pack(anchor="w", pady=5)
+        self.services_label.pack(anchor="w", pady=5, padx=20)
 
         self.message_preview_label = ctk.CTkLabel(
             self.info_frame,
             text="",
-            font=("Arial", 12),
+            font=("Arial", 16),
             justify="left",
             wraplength=700
         )
-        self.message_preview_label.pack(anchor="w", pady=5)
+        self.message_preview_label.pack(anchor="w", pady=5, padx=20)
 
         # Signature status frame
         self.signature_frame = ctk.CTkFrame(main_frame)
@@ -196,7 +198,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
     """Get list of private keys from private key ring"""
     def get_private_keys(self):
         try:
-            keys = PgpService.PrivateKeyRing().private_key_ring
+            keys = PGP_Service().private_key_ring.private_key_ring
             return [f"{hex(key_id)} - {record.name} <{record.email}>"
                     for key_id, record in keys.items()]
         except:
@@ -205,7 +207,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
     """Get list of public keys from public key ring"""
     def get_public_keys(self):
         try:
-            keys = PgpService.PublicKeyRing().public_key_ring
+            keys = PGP_Service().public_key_ring.public_key_ring
             return [f"{hex(key_id)} - {record.name} <{record.email}>"
                     for key_id, record in keys.items()]
         except:
@@ -215,6 +217,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
     def select_file(self):
         file_path = filedialog.askopenfilename(
             title="Select PGP Message File",
+            initialdir=sent_messages_folder,
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
         )
         if file_path:
@@ -242,8 +245,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            private_key_ring = PgpService.PrivateKeyRing()
-            record = private_key_ring.private_key_ring.get(key_id)
+            record = PGP_Service().private_key_ring.private_key_ring.get(key_id)
             if record:
                 return record.enc_private_key
         except:
@@ -257,8 +259,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
             return None
 
         try:
-            public_key_ring = PgpService.PublicKeyRing()
-            record = public_key_ring.public_key_ring.get(key_id)
+            record = PGP_Service().public_key_ring.public_key_ring.get(key_id)
             if record:
                 return record.public_key
         except:
@@ -266,7 +267,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
         return None
 
     """Show password dialog for private key decryption"""
-    def ask_password_dialog(self, key_info: str) -> str:
+    def ask_password_dialog(self, key_info: str) -> str | None:
         dialog = ctk.CTkToplevel(self)
         dialog.title("Enter Private Key Password")
         dialog.geometry("450x250")
@@ -368,7 +369,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
     """Decrypt private key using password"""
     def decrypt_private_key(self, encrypted_private_key: bytes, password: str) -> RSAPrivateKey | None:
         try:
-            private_key_bytes = PgpService.PrivateKeyRing().decrypt_private_key(
+            private_key_bytes = PGP_Service().private_key_ring.decrypt_private_key(
                 encrypted_private_key,
                 password
             )
@@ -435,8 +436,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
     """Decrypt and display message content"""
     def decrypt_and_display(self, file_path, private_key, sender_public_key):
         try:
-            pgp_service = PgpService.PGP_Service()
-            result = pgp_service.receive_message(file_path, private_key, sender_public_key)
+            result = PGP_Service().receive_message(file_path, private_key, sender_public_key)
 
             self.received_data = result
             self.original_message = result.get("data", "")
@@ -470,8 +470,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
                 self.signature_frame.pack(fill="x", pady=(0, 20))
                 sender_info = "Unknown"
                 if sender_public_key:
-                    public_key_ring = PgpService.PublicKeyRing()
-                    for key_id, record in public_key_ring.public_key_ring.items():
+                    for key_id, record in PGP_Service().public_key_ring.public_key_ring.items():
                         if record.public_key.public_numbers().n == sender_public_key.public_numbers().n:
                             sender_info = f"{record.name} <{record.email}>"
                             break
@@ -494,7 +493,7 @@ class ReceiveMessageDialog(ctk.CTkToplevel):
             # Hide decrypt frame if shown
             self.decrypt_frame.pack_forget()
 
-            messagebox.showinfo("Success", "Message decrypted successfully!")
+            messagebox.showinfo("Success", "Message received successfully!")
 
         except Exception as e:
             error_msg = str(e)

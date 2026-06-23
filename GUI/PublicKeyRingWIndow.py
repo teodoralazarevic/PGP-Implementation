@@ -2,7 +2,7 @@ import base64
 from tkinter import ttk
 import customtkinter as ctk
 
-import PgpService
+from PgpService import PGP_Service
 from cryptography.hazmat.primitives import serialization
 
 
@@ -77,9 +77,7 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        public_key_ring = PgpService.PublicKeyRing()
-
-        for key_id, record in public_key_ring.public_key_ring.items():
+        for key_id, record in PGP_Service().public_key_ring.public_key_ring.items():
             timestamp = record.timestamp
             key_id_hex = hex(key_id)
 
