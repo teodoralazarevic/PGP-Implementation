@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 from GUI.PrivateKeyRingWindow import PrivateKeyRingWindow
-from GUI.PublicKeyRingWIndow import PublicKeyRingWindow
+from GUI.PublicKeyRingWindow import PublicKeyRingWindow
 from GUI.ReceiveMessageDialog import ReceiveMessageDialog
 from GUI.SendMessageDialog import SendMessageDialog
 
