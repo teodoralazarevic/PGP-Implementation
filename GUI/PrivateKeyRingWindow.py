@@ -1,8 +1,9 @@
 import base64
-from tkinter import ttk, font, messagebox
+from tkinter import ttk, font, messagebox, filedialog
 import customtkinter as ctk
 from cryptography.hazmat.primitives import serialization
 
+from PemFiles import pem_files_folder, export_key_pair, import_key_pair
 from PgpService import PGP_Service
 from GUI.GenerateKeyDialog import GenerateKeyDialog
 
@@ -176,6 +177,20 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
         )
         generate_btn.pack(side="left", padx=5)
 
+        import_btn = ctk.CTkButton(
+            button_frame,
+            text="Import PEM",
+            command=self.import_pem
+        )
+        import_btn.pack(side="left", padx=5)
+
+        export_btn = ctk.CTkButton(
+            button_frame,
+            text="Export PEM",
+            command=self.export_pem
+        )
+        export_btn.pack(side="left", padx=5)
+
         close_btn = ctk.CTkButton(
             button_frame,
             text="Close",
@@ -230,6 +245,7 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
             )
 
             self.row_data[item_id] = {
+                "key_id": record.public_key.public_numbers().n % (2 ** 64),
                 "public_key": base64.b64encode(record.public_key.public_bytes(
                     encoding=serialization.Encoding.DER,
                     format=serialization.PublicFormat.SubjectPublicKeyInfo
@@ -307,3 +323,130 @@ class PrivateKeyRingWindow(ctk.CTkToplevel):
                 "Invalid Password",
                 "The supplied password is incorrect."
             )
+
+    def import_pem(self):
+
+        file_path = filedialog.askopenfilename(
+            title="Import PEM Key",
+            filetypes=[
+                ("PEM files", "*.pem"),
+                ("All files", "*.*")
+            ],
+            initialdir=pem_files_folder
+        )
+
+        if not file_path:
+            return
+
+        password = self.ask_password()
+
+        if password is None:
+            return
+
+        try:
+            import_key_pair(file_path, password)
+
+            self.refresh_table()
+
+            messagebox.showinfo(
+                "Success",
+                "Key imported successfully."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Import Failed",
+                str(e)
+            )
+
+    def export_pem(self):
+
+        if self.selected_item_id is None:
+            messagebox.showwarning(
+                "No Selection",
+                "Please select a key."
+            )
+            return
+
+        password = self.ask_password()
+
+        if password is None:
+            return
+
+        try:
+            key_id = self.row_data[self.selected_item_id]["key_id"]
+            export_key_pair(
+                PGP_Service().private_key_ring.private_key_ring[key_id].enc_private_key,
+                PGP_Service().private_key_ring.private_key_ring[key_id].public_key,
+                PGP_Service().private_key_ring.private_key_ring[key_id].name,
+                PGP_Service().private_key_ring.private_key_ring[key_id].email,
+                PGP_Service().private_key_ring.private_key_ring[key_id].timestamp,
+                password
+            )
+
+            messagebox.showinfo(
+                "Success",
+                "Key exported successfully."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Export Failed",
+                str(e)
+            )
+
+    def ask_password(self, title="Password Required") -> str | None:
+
+        result = {"password": None}
+
+        dialog = ctk.CTkToplevel(self)
+        dialog.title(title)
+        dialog.geometry("300x140")
+        dialog.resizable(False, False)
+
+        ctk.CTkLabel(
+            dialog,
+            text="Enter password:"
+        ).pack(pady=(15, 5))
+
+        password_entry = ctk.CTkEntry(
+            dialog,
+            show="*"
+        )
+        password_entry.pack(
+            fill="x",
+            padx=20,
+            pady=5
+        )
+
+        def on_ok():
+            result["password"] = password_entry.get()
+            dialog.destroy()
+
+        button_frame = ctk.CTkFrame(
+            dialog,
+            fg_color="transparent"
+        )
+        button_frame.pack(pady=10)
+
+        ctk.CTkButton(
+            button_frame,
+            text="OK",
+            command=on_ok
+        ).pack(side="left", padx=5)
+
+        ctk.CTkButton(
+            button_frame,
+            text="Cancel",
+            command=dialog.destroy
+        ).pack(side="left", padx=5)
+
+        dialog.transient(self)
+        dialog.wait_visibility()
+        dialog.grab_set()
+
+        password_entry.focus()
+
+        self.wait_window(dialog)
+
+        return result["password"]

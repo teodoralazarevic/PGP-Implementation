@@ -24,22 +24,22 @@ FUNKCIONALNI ZAHTEVI
 
 GUI
 -----------------------------------------------
-- Prikaz privatnog prstena
-	- pristup privatnom kljucu trazi unos lozinke
-- Prikaz javnog prstena
+✔ Prikaz privatnog prstena
+✔	- pristup privatnom kljucu trazi unos lozinke
+✔ Prikaz javnog prstena
 
 
 SLANJE PORUKE
 -----------------------------------------------
-- bira da li hoce tajnost, potpis, kompresiju, konverziju
-- slanjem poruke se kreira datoteka
+✔ bira da li hoce tajnost, potpis, kompresiju, konverziju
+✔ slanjem poruke se kreira datoteka
 
 PRIJEM PORUKE
 -----------------------------------------------
-- korisnik bira datoteku (predstavlja primljenu poruku)
-- dekripcija i verifikacija
-- ako je koriscen potpis, prikazuje info o potpisniku
-- korisnik moze da sacuva originalnu poruku
+✔ korisnik bira datoteku (predstavlja primljenu poruku)
+✔ dekripcija i verifikacija
+✔ ako je koriscen potpis, prikazuje info o potpisniku
+✔ korisnik moze da sacuva originalnu poruku
 - ako se pojavi negde greska, prikazati je
 
 NAPOMENE

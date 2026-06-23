@@ -1,7 +1,8 @@
 import base64
-from tkinter import ttk
+from tkinter import ttk, messagebox, filedialog
 import customtkinter as ctk
 
+from PemFiles import export_public_key, import_public_key, pem_files_folder
 from PgpService import PGP_Service
 from cryptography.hazmat.primitives import serialization
 
@@ -56,10 +57,36 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
             pady=10
         )
 
+        self.tree.bind(
+            "<<TreeviewSelect>>",
+            self.on_row_selected
+        )
+
+        self.row_data = {}
+
+        self.selected_item_id = None
+
         self.refresh_table()
 
+        button_frame = ctk.CTkFrame(self, fg_color="transparent")
+        button_frame.pack(pady=10)
+
+        import_btn = ctk.CTkButton(
+            button_frame,
+            text="Import PEM",
+            command=self.import_pem
+        )
+        import_btn.pack(side="left", padx=5)
+
+        export_btn = ctk.CTkButton(
+            button_frame,
+            text="Export PEM",
+            command=self.export_pem
+        )
+        export_btn.pack(side="left", padx=5)
+
         close_btn = ctk.CTkButton(
-            self,
+            button_frame,
             text="Close",
             command=self.destroy
         )
@@ -74,6 +101,11 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
 
     # loads data from public key ring
     def refresh_table(self):
+
+        self.row_data.clear()
+
+        self.selected_item_id = None
+
         for item in self.tree.get_children():
             self.tree.delete(item)
 
@@ -91,7 +123,7 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
             name = record.name
             email = record.email
 
-            self.tree.insert(
+            item_id = self.tree.insert(
                 "",
                 "end",
                 values=(
@@ -101,4 +133,78 @@ class PublicKeyRingWindow(ctk.CTkToplevel):
                     name,
                     email
                 )
+            )
+
+            self.row_data[item_id] = {
+                "key_id": record.public_key.public_numbers().n % (2 ** 64),
+                "public_key": base64.b64encode(record.public_key.public_bytes(
+                    encoding=serialization.Encoding.DER,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo
+                )).decode('utf-8')
+            }
+    def on_row_selected(self, event):
+        selection = self.tree.selection()
+
+        if not selection:
+            return
+
+        self.selected_item_id = selection[0]
+
+    def import_pem(self):
+
+        file_path = filedialog.askopenfilename(
+            title="Import PEM Key",
+            filetypes=[
+                ("PEM files", "*.pem"),
+                ("All files", "*.*")
+            ],
+            initialdir=pem_files_folder
+        )
+
+        if not file_path:
+            return
+
+        try:
+            import_public_key(file_path)
+
+            self.refresh_table()
+
+            messagebox.showinfo(
+                "Success",
+                "Key imported successfully."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Import Failed",
+                str(e)
+            )
+
+    def export_pem(self):
+
+        if self.selected_item_id is None:
+            messagebox.showwarning(
+                "No Selection",
+                "Please select a key."
+            )
+            return
+
+        try:
+            key_id = self.row_data[self.selected_item_id]["key_id"]
+            export_public_key(
+                PGP_Service().public_key_ring.public_key_ring[key_id].public_key,
+                PGP_Service().public_key_ring.public_key_ring[key_id].name,
+                PGP_Service().public_key_ring.public_key_ring[key_id].email,
+                PGP_Service().public_key_ring.public_key_ring[key_id].timestamp
+            )
+
+            messagebox.showinfo(
+                "Success",
+                "Key exported successfully."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Export Failed",
+                str(e)
             )

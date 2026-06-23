@@ -1,5 +1,6 @@
 import base64
 import json
+from pathlib import Path
 from typing import cast
 
 from cryptography.hazmat.primitives import serialization
@@ -8,6 +9,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from PublicKeyRing import PublicKeyRing
 from PrivateKeyRing import PrivateKeyRing
 
+pem_files_folder = Path('pem_files')
 
 def import_public_key(pem_file_name: str):
     with open(pem_file_name, "r") as f:
@@ -24,6 +26,8 @@ def import_public_key(pem_file_name: str):
     PublicKeyRing().add_public_key(public_key, name, email, timestamp = timestamp)
 
 def export_public_key(public_key: RSAPublicKey, name: str, email: str, timestamp: float):
+    global pem_files_folder
+
     pem_text = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
 
     data = {
@@ -36,10 +40,12 @@ def export_public_key(public_key: RSAPublicKey, name: str, email: str, timestamp
     json_bytes = json.dumps(data).encode('utf-8')
     base_64_string = base64.b64encode(json_bytes).decode('utf-8')
 
-    with open(name + '-' + email + ".pem", "w") as f:
+    pem_files_folder.mkdir(parents=True, exist_ok=True)
+
+    with open(pem_files_folder / (name + '-' + email + ".pem"), "w") as f:
         f.write("-----BEGIN PUBLIC KEY-----\n")
         f.write(base_64_string)
-        f.write("-----END PUBLIC KEY-----\n")
+        f.write("\n-----END PUBLIC KEY-----\n")
 
 def import_key_pair(pem_file_name: str, password: str) -> None:
     with open(pem_file_name, "r") as f:
@@ -64,7 +70,13 @@ def import_key_pair(pem_file_name: str, password: str) -> None:
 
 def export_key_pair(encrypted_private_key: bytes, public_key: RSAPublicKey, name: str,
                     email: str, timestamp: float, password: str) -> None:
+    global pem_files_folder
+
     private_key_bytes = PrivateKeyRing().decrypt_private_key(encrypted_private_key, password)
+
+    if private_key_bytes is None:
+        raise ValueError("Invalid password.")
+
     private_key = serialization.load_der_private_key(private_key_bytes, password=None)
 
     private_pem = private_key.private_bytes(encoding = serialization.Encoding.PEM,
@@ -84,8 +96,11 @@ def export_key_pair(encrypted_private_key: bytes, public_key: RSAPublicKey, name
     json_bytes = json.dumps(data).encode('utf-8')
     base_64_string = base64.b64encode(json_bytes).decode('utf-8')
 
+
+    pem_files_folder.mkdir(parents=True, exist_ok=True)
+
     filename = f"{name}-{email}-keypair.pem"
-    with open(filename, "w") as f:
+    with open(pem_files_folder / filename, "w") as f:
         f.write("-----BEGIN PGP KEY PAIR-----\n")
         f.write(base_64_string)
         f.write("\n")
